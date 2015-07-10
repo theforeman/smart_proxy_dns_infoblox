@@ -15,7 +15,7 @@ This plugin is compatible with Smart Proxy 1.10 or higher.
 
 To enable this DNS provider, edit `/etc/foreman-proxy/settings.d/dns.yml` and set:
 
-   :use_provider: dns_plugin_template
+    :use_provider: dns_plugin_template
 
 Configuration options for this plugin are in `/etc/foreman-proxy/settings.d/dns_plugin_template.yml` and include:
 
