@@ -1,28 +1,36 @@
 require 'test_helper'
-
+require 'dns/dns_plugin'
+require 'smart_proxy_dns_plugin_template/dns_plugin_template_plugin'
 require 'smart_proxy_dns_plugin_template/dns_plugin_template_main'
 
+
 class DnsPluginTemplateRecordTest < Test::Unit::TestCase
+
+  def test_default_settings
+    Proxy::Dns::PluginTemplate::Plugin.load_test_settings({})
+    assert_equal "default_value", Proxy::Dns::Nsupdate::Plugin.settings.required_setting
+    assert_equal "/must/exist", Proxy::Dns::Nsupdate::Plugin.settings.required_path
+  end
+
+  def test_initialized_correctly
+    Proxy::Dns::PluginTemplate::Plugin.load_test_settings(:example_setting => 'a_value',
+                                                          :required_setting => 'required_setting',
+                                                          :optional_path => '/some/path',
+                                                          :required_path => '/required/path')
+
+    assert_equal 'a_value', klass.new.example_setting
+    assert_equal 'required_value', klass.new.required_setting
+    assert_equal '/some/path', klass.new.optional_path
+    assert_equal '/required/path', klass.new.required_path
+  end
+
   # Test that a missing :example_setting throws an error
-  def test_initialize_without_settings
-    assert_raise(RuntimeError) do
-      klass.new(settings.delete_if { |k,v| k == :example_setting })
-    end
-  end
-
-  # Test that correct initialization works
-  def test_initialize_with_settings
-    assert_nothing_raised do
-      klass.new(settings)
-    end
-  end
-
   # Test A record creation
   def test_create_a
     # Use mocha to expect any calls to backend services to prevent creating real records
     #   MyService.expects(:create).with(:ip => '10.1.1.1', :name => 'test.example.com').returns(true)
 
-    assert klass.new(settings).create
+    assert klass.new.create_a_record('test.example.com', '10.1.1.1')
   end
 
   # Test A record creation fails if the record exists
@@ -30,7 +38,7 @@ class DnsPluginTemplateRecordTest < Test::Unit::TestCase
     # Use mocha to expect any calls to backend services to prevent creating real records
     #   MyService.expects(:create).with(:ip => '10.1.1.1', :name => 'test.example.com').returns(false)
 
-    assert_raise(Proxy::Dns::Collision) { klass.new(settings).create }
+    assert_raise(Proxy::Dns::Collision) { klass.new.create_a_record('test.example.com', '10.1.1.1') }
   end
 
   # Test PTR record creation
@@ -38,7 +46,7 @@ class DnsPluginTemplateRecordTest < Test::Unit::TestCase
     # Use mocha to expect any calls to backend services to prevent creating real records
     #   MyService.expects(:create_reverse).with(:ip => '10.1.1.1', :name => 'test.example.com').returns(true)
 
-    assert klass.new(settings.merge(:type => 'PTR')).create
+    assert klass.new.create_ptr_record('test.example.com', '10.1.1.1')
   end
 
   # Test PTR record creation fails if the record exists
@@ -46,7 +54,7 @@ class DnsPluginTemplateRecordTest < Test::Unit::TestCase
     # Use mocha to expect any calls to backend services to prevent creating real records
     #   MyService.expects(:create_reverse).with(:ip => '10.1.1.1', :name => 'test.example.com').returns(false)
 
-    assert_raise(Proxy::Dns::Collision) { klass.new(settings.merge(:type => 'PTR')).create }
+    assert_raise(Proxy::Dns::Collision) { klass.new.create_ptr_record('test.example.com', '10.1.1.1') }
   end
 
   # Test A record removal
@@ -54,7 +62,7 @@ class DnsPluginTemplateRecordTest < Test::Unit::TestCase
     # Use mocha to expect any calls to backend services to prevent deleting real records
     #   MyService.expects(:delete).with(:name => 'test.example.com').returns(true)
 
-    assert klass.new(settings).remove
+    assert klass.new.remove_a_record('test.example.com')
   end
 
   # Test A record removal fails if the record doesn't exist
@@ -62,7 +70,7 @@ class DnsPluginTemplateRecordTest < Test::Unit::TestCase
     # Use mocha to expect any calls to backend services to prevent deleting real records
     #   MyService.expects(:delete).with(:name => 'test.example.com').returns(false)
 
-    assert_raise(Proxy::Dns::NotFound) { assert klass.new(settings).remove }
+    assert_raise(Proxy::Dns::NotFound) { assert klass.new.remove_a_record('test.example.com') }
   end
 
   # Test PTR record removal
@@ -70,7 +78,7 @@ class DnsPluginTemplateRecordTest < Test::Unit::TestCase
     # Use mocha to expect any calls to backend services to prevent deleting real records
     #   MyService.expects(:delete).with(:ip => '10.1.1.1').returns(true)
 
-    assert klass.new(settings.merge(:type => 'PTR')).remove
+    assert klass.new.remove_ptr_record('1.1.1.10.in-addr.arpa')
   end
 
   # Test PTR record removal fails if the record doesn't exist
@@ -78,21 +86,10 @@ class DnsPluginTemplateRecordTest < Test::Unit::TestCase
     # Use mocha to expect any calls to backend services to prevent deleting real records
     #   MyService.expects(:delete).with(:ip => '10.1.1.1').returns(false)
 
-    assert_raise(Proxy::Dns::NotFound) { assert klass.new(settings.merge(:type => 'PTR')).remove }
+    assert_raise(Proxy::Dns::NotFound) { assert klass.new.remove_ptr_record('1.1.1.10.in-addr.arpa') }
   end
-
-  private
 
   def klass
     Proxy::Dns::PluginTemplate::Record
-  end
-
-  def settings
-    {
-      :example_setting => 'foo',
-      :fqdn => 'test.example.com',
-      :value => '10.1.1.1',
-      :type => 'A'
-    }
   end
 end
