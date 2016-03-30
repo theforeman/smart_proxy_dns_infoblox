@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.version     = Proxy::Dns::Infoblox::VERSION
   s.date        = Date.today.to_s
   s.license     = 'GPLv3'
-  s.authors     = ['TODO: Matthew Nicholson']
-  s.email       = ['TODO: matthew.a.nicholson@gmail.com']
+  s.authors     = ['Matthew Nicholson']
+  s.email       = ['matthew.a.nicholson@gmail.com']
   s.homepage    = 'https://github.com/sjoeboo/smart_proxy_dns_infoblox'
 
   s.summary     = "Infoblox DNS provider plugin for Foreman's smart proxy"

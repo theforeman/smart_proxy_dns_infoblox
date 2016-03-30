@@ -1,6 +1,6 @@
 ---
 #
-# Configuration file for 'dns_plugin_template' dns provider
+# Configuration file for 'infoblox dns provider
 #
 
 :infoblox_user: "infoblox"

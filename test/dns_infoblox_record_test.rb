@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'dns/dns_plugin'
-require 'smart_proxy_dns_plugin_template/dns_plugin_template_plugin'
-require 'smart_proxy_dns_plugin_template/dns_plugin_template_main'
+require 'smart_proxy_dns_infoblox/dns_infoblox_plugin'
+require 'smart_proxy_dns_infoblox/dns_infoblox_main'
 
 
 class DnsInfobloxRecordTest < Test::Unit::TestCase

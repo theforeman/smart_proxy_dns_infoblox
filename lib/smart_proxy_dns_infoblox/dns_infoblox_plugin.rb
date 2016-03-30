@@ -1,8 +1,8 @@
-require 'smart_proxy_dns_plugin_template/dns_plugin_template_version'
+require 'smart_proxy_dns_infoblox/dns_infoblox_version'
 
 module Proxy::Dns::Infoblox
   class Plugin < ::Proxy::Provider
-    plugin :dns_plugin_template, ::Proxy::Dns::Infoblox::VERSION
+    plugin :dns_infoblox, ::Proxy::Dns::Infoblox::VERSION
 
     # Settings listed under default_settings are required.
     # An exception will be raised if they are initialized with nil values.
@@ -14,8 +14,8 @@ module Proxy::Dns::Infoblox
     validate_presence :infoblox_user, :infoblox_pw, :infoblox_host
 
     after_activation do
-      require 'smart_proxy_dns_plugin_template/dns_plugin_template_main'
-      require 'smart_proxy_dns_plugin_template/dns_plugin_template_dependencies'
+      require 'smart_proxy_dns_infoblox/dns_infoblox_main'
+      require 'smart_proxy_dns_infoblox/dns_infoblox_dependencies'
     end
   end
 end

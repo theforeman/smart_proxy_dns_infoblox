@@ -1,3 +1,3 @@
-require 'smart_proxy_dns_plugin_template/dns_plugin_template_plugin'
+require 'smart_proxy_dns_infoblox/dns_infoblox_plugin'
 
 module Proxy::Dns::Infoblox; end

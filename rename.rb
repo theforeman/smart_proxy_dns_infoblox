@@ -36,18 +36,18 @@ Find.find('.') do |path|
   next if path == './rename.rb'
 
   # Change content on all files
-  system(%(sed 's/dns_plugin_template/#{snake}/g' -i #{path} ))
+  system(%(sed 's/dns_infoblox/#{snake}/g' -i #{path} ))
   system(%(sed 's/DnsInfoblox/#{camel}/g'   -i #{path} ))
   system(%(sed 's/Infoblox/#{camel.sub(/\ADns/, '')}/g'   -i #{path} ))
 end
 
 Find.find('.') do |path|
   # Change all the paths to the new snake_case name
-  if path =~ /dns_plugin_template/i
-    new = path.gsub('dns_plugin_template', snake)
+  if path =~ /dns_infoblox/i
+    new = path.gsub('dns_infoblox', snake)
     # Recursively copy the directory and store the original for deletion
     # Check for $ because we don't need to copy template/hosts for example
-    if File.directory?(path) && path =~ /dns_plugin_template$/i
+    if File.directory?(path) && path =~ /dns_infoblox$/i
       FileUtils.mkdir_p(new)
       old_dirs << path
     else
