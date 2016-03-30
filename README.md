@@ -1,34 +1,33 @@
-# Smart Proxy DNS plugin template
+# SmartProxyDnsPluginTemplate
 
-This repo is an example plugin which you can use as a starting point for developing
-your own DNS provider plugin for the Smart Proxy.
+*Introduction here*
 
-## Getting Started
+This plugin adds a new DNS provider for managing records in MyService.
 
-First, clone this repo to a directory named for your new plugin
+## Installation
 
-    git clone https://github.com/theforeman/smart_proxy_dns_plugin_template smart_proxy_dns_my_plugin
+See [How_to_Install_a_Smart-Proxy_Plugin](http://projects.theforeman.org/projects/foreman/wiki/How_to_Install_a_Smart-Proxy_Plugin)
+for how to install Smart Proxy plugins
 
-Now use the provided script to rewrite all the files in the plugin
+This plugin is compatible with Smart Proxy 1.10 or higher.
 
-    cd smart_proxy_dns_my_plugin
-    ./rename.rb smart_proxy_dns_my_plugin
+## Configuration
 
-The script will output the required Bundler line to add the plugin to the Smart Proxy.
-Apply this change, and restart the Smart Proxy to load it.
+To enable this DNS provider, edit `/etc/foreman-proxy/settings.d/dns.yml` and set:
 
-Once working, update the README.md with appropriate information, and publish your plugin!
+    :use_provider: dns_plugin_template
 
-## Getting help
+Configuration options for this plugin are in `/etc/foreman-proxy/settings.d/dns_plugin_template.yml` and include:
 
-The Foreman developers IRC channel and mailing list are the best places to get help:
+* example_setting: change this as an example
 
-* Freenode: #theforeman-dev
-* Google Groups: foreman-dev@googlegroups.com
+## Contributing
+
+Fork and send a Pull Request. Thanks!
 
 ## Copyright
 
-Copyright (c) 2015 Red Hat
+Copyright (c) *year* *your name*
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,3 +41,4 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
