@@ -12,7 +12,7 @@ module Proxy::Dns::Infoblox
       @infoblox_user =  ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_user
       @infoblox_pw =  ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_pw
       @infoblox_host =  ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_host
-      @conn ||=Infoblox::Connection.new(username: infoblox_user ,password: infoblox_pw, host: infoblox_host)
+      @conn ||=Infoblox::Connection.new(username: @infoblox_user ,password: @infoblox_pw, host: @infoblox_host)
       super('localhost', ::Proxy::Dns::Plugin.settings.dns_ttl)
     end
 
@@ -21,7 +21,7 @@ module Proxy::Dns::Infoblox
       if found = dns_find(fqdn)
         raise(Proxy::Dns::Collision, "#{fqdn} is already used by #{ip_in_use}")
       else
-        a_record=Infoblox::Arecord.new(connection: conn, name: fqdn, ipv4addr: ip)
+        a_record=Infoblox::Arecord.new(connection: @conn, name: fqdn, ipv4addr: ip)
         if a_record.post
           true
         end
@@ -32,7 +32,7 @@ module Proxy::Dns::Infoblox
       if found = dns_find(ip)
         raise(Proxy::Dns::Collision, "#{ip} is already used by #{fqdn_in_use}")
       else
-        ptr_record=Infoblox::Ptr.new(connection: conn, ptrdname: fqdn, ip4vaddr: ip)
+        ptr_record=Infoblox::Ptr.new(connection: @conn, ptrdname: fqdn, ip4vaddr: ip)
         if ptr_record.post
           true
         end
@@ -43,7 +43,7 @@ module Proxy::Dns::Infoblox
     end
 
     def remove_a_record(fqdn)
-      a_record = Infoblox::Arecord.find( conn, {name: fqdn}).first
+      a_record = Infoblox::Arecord.find( @conn, {name: fqdn}).first
       if a_record.delete
         true
       else
@@ -52,7 +52,7 @@ module Proxy::Dns::Infoblox
     end
 
     def remove_ptr_record(ip)
-      ptr_record = Infoblox::Ptr.find(conn, { ipv4addr: ip }).first
+      ptr_record = Infoblox::Ptr.find(@conn, { ipv4addr: ip }).first
       if ptr_record.delete
         true
       else
