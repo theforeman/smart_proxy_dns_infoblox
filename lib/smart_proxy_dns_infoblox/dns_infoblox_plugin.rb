@@ -1,19 +1,17 @@
 require 'smart_proxy_dns_plugin_template/dns_plugin_template_version'
 
-module Proxy::Dns::PluginTemplate
+module Proxy::Dns::Infoblox
   class Plugin < ::Proxy::Provider
-    plugin :dns_plugin_template, ::Proxy::Dns::PluginTemplate::VERSION
+    plugin :dns_plugin_template, ::Proxy::Dns::Infoblox::VERSION
 
     # Settings listed under default_settings are required.
     # An exception will be raised if they are initialized with nil values.
     # Settings not listed under default_settings are considered optional and by default have nil value.
-    default_settings :required_setting => 'default_value', :required_path => '/must/exist'
+    default_settings :infoblox_user => 'infoblox', :infoblox_pw => 'infoblox', :infoblox_host => 'infoblox.my.domain'
 
     requires :dns, '>= 1.11'
 
-    # Verifies that a file exists and is readable.
-    # Uninitialized optional settings will not trigger validation errors.
-    validate_readable :required_path, :optional_path
+    validate_presence :infoblox_user, :infoblox_pw, :infoblox_host
 
     after_activation do
       require 'smart_proxy_dns_plugin_template/dns_plugin_template_main'

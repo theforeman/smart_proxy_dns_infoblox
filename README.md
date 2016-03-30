@@ -1,4 +1,4 @@
-# SmartProxyDnsPluginTemplate
+# SmartProxyDnsInfoblox
 
 *Introduction here*
 

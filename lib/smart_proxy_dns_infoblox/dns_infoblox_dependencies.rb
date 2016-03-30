@@ -1,5 +1,5 @@
 require 'dns_common/dependency_injection/dependencies'
 
 class Proxy::Dns::DependencyInjection::Dependencies
-  dependency :dns_provider, Proxy::Dns::PluginTemplate::Record
+  dependency :dns_provider, Proxy::Dns::Infoblox::Record
 end

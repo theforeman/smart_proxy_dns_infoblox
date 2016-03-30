@@ -4,16 +4,16 @@ require 'smart_proxy_dns_plugin_template/dns_plugin_template_plugin'
 require 'smart_proxy_dns_plugin_template/dns_plugin_template_main'
 
 
-class DnsPluginTemplateRecordTest < Test::Unit::TestCase
+class DnsInfobloxRecordTest < Test::Unit::TestCase
 
   def test_default_settings
-    Proxy::Dns::PluginTemplate::Plugin.load_test_settings({})
+    Proxy::Dns::Infoblox::Plugin.load_test_settings({})
     assert_equal "default_value", Proxy::Dns::Nsupdate::Plugin.settings.required_setting
     assert_equal "/must/exist", Proxy::Dns::Nsupdate::Plugin.settings.required_path
   end
 
   def test_initialized_correctly
-    Proxy::Dns::PluginTemplate::Plugin.load_test_settings(:example_setting => 'a_value',
+    Proxy::Dns::Infoblox::Plugin.load_test_settings(:example_setting => 'a_value',
                                                           :required_setting => 'required_setting',
                                                           :optional_path => '/some/path',
                                                           :required_path => '/required/path')
@@ -90,6 +90,6 @@ class DnsPluginTemplateRecordTest < Test::Unit::TestCase
   end
 
   def klass
-    Proxy::Dns::PluginTemplate::Record
+    Proxy::Dns::Infoblox::Record
   end
 end

@@ -37,8 +37,8 @@ Find.find('.') do |path|
 
   # Change content on all files
   system(%(sed 's/dns_plugin_template/#{snake}/g' -i #{path} ))
-  system(%(sed 's/DnsPluginTemplate/#{camel}/g'   -i #{path} ))
-  system(%(sed 's/PluginTemplate/#{camel.sub(/\ADns/, '')}/g'   -i #{path} ))
+  system(%(sed 's/DnsInfoblox/#{camel}/g'   -i #{path} ))
+  system(%(sed 's/Infoblox/#{camel.sub(/\ADns/, '')}/g'   -i #{path} ))
 end
 
 Find.find('.') do |path|

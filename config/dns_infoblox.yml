@@ -3,8 +3,6 @@
 # Configuration file for 'dns_plugin_template' dns provider
 #
 
-# override :required_setting here, by default it is set to 'default_value'
-# :required_setting: non-default-value
-# :example_setting is an optional setting. Comment out the next line to leave it unset
-:example_setting: example
-:optional_path: /optional/path
+:infoblox_user: "infoblox"
+:infoblox_pw: "infoblox"
+infoblox_host: "infoblox.my.domain"

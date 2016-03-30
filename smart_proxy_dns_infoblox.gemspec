@@ -3,7 +3,7 @@ require 'date'
 
 Gem::Specification.new do |s|
   s.name        = 'smart_proxy_dns_plugin_template'
-  s.version     = Proxy::Dns::PluginTemplate::VERSION
+  s.version     = Proxy::Dns::Infoblox::VERSION
   s.date        = Date.today.to_s
   s.license     = 'GPLv3'
   s.authors     = ['TODO: Your name']
@@ -15,6 +15,8 @@ Gem::Specification.new do |s|
 
   s.files       = Dir['{config,lib,bundler.d}/**/*'] + ['README.md', 'LICENSE']
   s.test_files  = Dir['test/**/*']
+
+  s.add_dependency 'infoblox'
 
   s.add_development_dependency('rake')
   s.add_development_dependency('mocha')
