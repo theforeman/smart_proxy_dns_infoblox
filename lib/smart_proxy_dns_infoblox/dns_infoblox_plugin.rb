@@ -2,7 +2,8 @@ require 'smart_proxy_dns_infoblox/dns_infoblox_version'
 
 module Proxy::Dns::Infoblox
   class Plugin < ::Proxy::Provider
-    plugin :dns_infoblox, ::Proxy::Dns::Infoblox::VERSION
+    plugin :dns_infoblox, ::Proxy::Dns::Infoblox::VERSION, :factory => proc { |attrs| ::Proxy::Dns::Infoblox::Record.record(attrs) }
+
 
     # Settings listed under default_settings are required.
     # An exception will be raised if they are initialized with nil values.
@@ -11,7 +12,7 @@ module Proxy::Dns::Infoblox
 
     requires :dns, '>= 1.11'
 
-    validate_presence :infoblox_user, :infoblox_pw, :infoblox_host
+    #validate_presence :infoblox_user, :infoblox_pw, :infoblox_host
 
     after_activation do
       require 'smart_proxy_dns_infoblox/dns_infoblox_main'

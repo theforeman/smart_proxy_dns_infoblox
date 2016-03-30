@@ -1,3 +1,4 @@
+require 'dns/dns'
 require 'dns_common/dns_common'
 require 'infoblox'
 module Proxy::Dns::Infoblox
@@ -12,6 +13,7 @@ module Proxy::Dns::Infoblox
       @infoblox_pw =  ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_pw
       @infoblox_host =  ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_host
       @conn ||=Infoblox::Connection.new(username: infoblox_user ,password: infoblox_pw, host: infoblox_host)
+      super('localhost', ::Proxy::Dns::Plugin.settings.dns_ttl)
     end
 
     # Calls to these methods are guaranteed to have non-nil parameters
@@ -23,6 +25,7 @@ module Proxy::Dns::Infoblox
         if a_record.post
           true
         end
+      end
     end
 
     def create_ptr_record(fqdn, ip)
@@ -33,13 +36,14 @@ module Proxy::Dns::Infoblox
         if ptr_record.post
           true
         end
+      end
       # FIXME: add a reverse 'PTR' record with ip, fqdn
       # Raise an error if the IP is already in DNS but with a different FQDN:
       #   raise(Proxy::Dns::Collision, "#{ip} is already used by #{fqdn_in_use}")
     end
 
     def remove_a_record(fqdn)
-      a_record = Infoblox.Arecord.find( conn, {name: fqdn}).first
+      a_record = Infoblox::Arecord.find( conn, {name: fqdn}).first
       if a_record.delete
         true
       else
