@@ -27,7 +27,7 @@ module Proxy::Dns::Infoblox
     def create_ptr_record(fqdn, ip)
       raise(Proxy::Dns::Collision, "#{ip} is already used by #{fqdn_in_use}") if dns_find(ip)
 
-      ptr_record = Infoblox::Ptr.new(connection: @conn, ptrdname: fqdn, ip4vaddr: ip)
+      ptr_record = Infoblox::Ptr.new(connection: @conn, ptrdname: fqdn, ipv4addr: ip)
       ptr_record.post
       # FIXME: add a reverse 'PTR' record with ip, fqdn
       # Raise an error if the IP is already in DNS but with a different FQDN:
