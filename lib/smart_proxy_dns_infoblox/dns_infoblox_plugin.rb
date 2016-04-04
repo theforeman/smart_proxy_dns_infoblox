@@ -4,7 +4,6 @@ module Proxy::Dns::Infoblox
   class Plugin < ::Proxy::Provider
     plugin :dns_infoblox, ::Proxy::Dns::Infoblox::VERSION, :factory => proc { |attrs| ::Proxy::Dns::Infoblox::Record.record(attrs) }
 
-
     # Settings listed under default_settings are required.
     # An exception will be raised if they are initialized with nil values.
     # Settings not listed under default_settings are considered optional and by default have nil value.
