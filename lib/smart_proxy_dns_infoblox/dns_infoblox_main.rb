@@ -9,6 +9,7 @@ module Proxy::Dns::Infoblox
     attr_reader :example_setting, :optional_path, :required_setting, :required_path
 
     def initialize
+      ENV['WAPI_VERSION']='2.0'
       @infoblox_user = ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_user
       @infoblox_pw   = ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_pw
       @infoblox_host = ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_host
@@ -29,6 +30,7 @@ module Proxy::Dns::Infoblox
       raise(Proxy::Dns::Collision, "#{ip} is already used by #{fqdn_in_use}") if dns_find(ip)
       fixed_ip = ip.chomp('.in-addr.arpa').split('.').reverse .join('.')
       ptr_record = Infoblox::Ptr.new(connection: @conn, ptrdname: fqdn, ipv4addr: fixed_ip)
+
       ptr_record.post
       # FIXME: add a reverse 'PTR' record with ip, fqdn
       # Raise an error if the IP is already in DNS but with a different FQDN:
@@ -44,6 +46,8 @@ module Proxy::Dns::Infoblox
       #ip here comes in as 2.1.168.192.in-addr.arpa, so we need to strip and reverse.
       fixed_ip = ip.chomp('.in-addr.arpa').split('.').reverse .join('.')
       ptr_record = Infoblox::Ptr.find(@conn, { ipv4addr: fixed_ip }).first
+      ptr_record.ipv6addr=nil
+      ptr_record.view=nil
       ptr_record.delete || raise(Proxy::Dns::NotFound.new("Cannot find DNS entry for #{ip}"))
       # FIXME: remove the reverse 'PTR' record with ip
       # Raise an error if the IP is not in DNS:
