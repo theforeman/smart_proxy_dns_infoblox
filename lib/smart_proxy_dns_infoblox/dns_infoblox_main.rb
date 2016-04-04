@@ -25,6 +25,7 @@ module Proxy::Dns::Infoblox
     end
 
     def create_ptr_record(fqdn, ip)
+      #ip here comes in as 2.1.168.192.in-addr.arpa, so we need to strip and reverse.
       raise(Proxy::Dns::Collision, "#{ip} is already used by #{fqdn_in_use}") if dns_find(ip)
       fixed_ip = ip.chomp('.in-addr.arpa').split('.').reverse .join('.')
       ptr_record = Infoblox::Ptr.new(connection: @conn, ptrdname: fqdn, ipv4addr: fixed_ip)
@@ -40,7 +41,9 @@ module Proxy::Dns::Infoblox
     end
 
     def remove_ptr_record(ip)
-      ptr_record = Infoblox::Ptr.find(@conn, { ipv4addr: ip }).first
+      #ip here comes in as 2.1.168.192.in-addr.arpa, so we need to strip and reverse.
+      fixed_ip = ip.chomp('.in-addr.arpa').split('.').reverse .join('.')
+      ptr_record = Infoblox::Ptr.find(@conn, { ipv4addr: fixed_ip }).first
       ptr_record.delete || raise(Proxy::Dns::NotFound.new("Cannot find DNS entry for #{ip}"))
       # FIXME: remove the reverse 'PTR' record with ip
       # Raise an error if the IP is not in DNS:
