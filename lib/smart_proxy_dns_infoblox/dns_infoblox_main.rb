@@ -14,12 +14,12 @@ module Proxy::Dns::Infoblox
       @infoblox_pw   = ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_pw
       @infoblox_host = ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_host
       @conn          = ::Infoblox::Connection.new(username: @infoblox_user ,password: @infoblox_pw, host: @infoblox_host)
-      super('localhost', ::Proxy::Dns::Plugin.settings.dns_ttl)
+      super(@infoblox_host, ::Proxy::Dns::Plugin.settings.dns_ttl)
     end
 
     # Calls to these methods are guaranteed to have non-nil parameters
     def create_a_record(fqdn, ip)
-      raise(Proxy::Dns::Collision, "#{fqdn} is already used by #{ip_in_use}") if dns_find(fqdn)
+      raise(Proxy::Dns::Collision, "#{fqdn} is already in use") if dns_find(fqdn)
 
       a_record = Infoblox::Arecord.new(connection: @conn, name: fqdn, ipv4addr: ip)
       a_record.post
@@ -27,7 +27,7 @@ module Proxy::Dns::Infoblox
 
     def create_ptr_record(fqdn, ip)
       #ip here comes in as 2.1.168.192.in-addr.arpa, so we need to strip and reverse.
-      raise(Proxy::Dns::Collision, "#{ip} is already used by #{fqdn_in_use}") if dns_find(ip)
+      raise(Proxy::Dns::Collision, "#{ip} is already in use") if dns_find(ip)
       fixed_ip = ip.chomp('.in-addr.arpa').split('.').reverse .join('.')
       ptr_record = Infoblox::Ptr.new(connection: @conn, ptrdname: fqdn, ipv4addr: fixed_ip)
 
