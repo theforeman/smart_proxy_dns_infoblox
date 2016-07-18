@@ -14,7 +14,7 @@ module Proxy::Dns::Infoblox
       @infoblox_pw   = ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_pw
       @infoblox_host = ::Proxy::Dns::Infoblox::Plugin.settings.infoblox_host
       @conn          = ::Infoblox::Connection.new(:username => @infoblox_user ,:password => @infoblox_pw, :host => @infoblox_host)
-      super('localhost', ::Proxy::Dns::Plugin.settings.dns_ttl)
+      super(@infoblox_host, ::Proxy::Dns::Plugin.settings.dns_ttl)
     end
 
     # Calls to these methods are guaranteed to have non-nil parameters
