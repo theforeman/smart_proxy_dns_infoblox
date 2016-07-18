@@ -7,9 +7,16 @@ This plugin adds a new DNS provider for managing records in MyService.
 ## Installation
 
 See [How_to_Install_a_Smart-Proxy_Plugin](http://projects.theforeman.org/projects/foreman/wiki/How_to_Install_a_Smart-Proxy_Plugin)
-for how to install Smart Proxy plugins
+for how to install Smart Proxy plugins.
 
-This plugin is compatible with Smart Proxy 1.10 or higher.
+Example, create the file `/usr/share/foreman-proxy/bundler.d/dns_infoblox.rb` with
+
+```ruby
+gem 'smart_proxy_dns_infoblox'
+gem 'infoblox'
+```
+
+This plugin is compatible with Smart Proxy 1.11 or higher.
 
 ## Configuration
 
@@ -19,7 +26,19 @@ To enable this DNS provider, edit `/etc/foreman-proxy/settings.d/dns.yml` and se
 
 Configuration options for this plugin are in `/etc/foreman-proxy/settings.d/dns_infoblox.yml` and include:
 
-* example_setting: change this as an example
+* example_setting:
+
+```yaml
+---
+#
+# Configuration file for 'infoblox dns provider
+#
+
+:enabled: true
+:infoblox_user: "API_user"
+:infoblox_pw: "xxxxxxxxxxxxxxxxxxxxxxx"
+:infoblox_host: "ipam.example.com"
+```
 
 ## Contributing
 
