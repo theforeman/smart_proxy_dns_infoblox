@@ -40,6 +40,13 @@ Configuration options for this plugin are in `/etc/foreman-proxy/settings.d/dns_
 :infoblox_host: "ipam.example.com"
 ```
 
+For secrutiry reasons, you should set owner and mode like this:
+
+```
+chown root:foreman-proxy /etc/foreman-proxy/settings.d/dns_infoblox.yml 
+chmod 640 /etc/foreman-proxy/settings.d/dns_infoblox.yml 
+```
+
 ## Contributing
 
 Fork and send a Pull Request. Thanks!
