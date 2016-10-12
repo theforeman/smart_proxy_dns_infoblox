@@ -12,7 +12,7 @@ module Proxy::Dns::Infoblox
                                       ::Infoblox.wapi_version = '2.0'
                                       ::Infoblox::Connection.new(:username => settings[:username],
                                                                  :password => settings[:password],
-                                                                 :host => settings[:dns_server],
+                                                                 :host => settings[:infoblox_host],
                                                                  :ssl_opts => {:verify => false})
                                     end)
       container_instance.dependency :dns_provider,

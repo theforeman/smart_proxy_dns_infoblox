@@ -9,7 +9,7 @@ module Proxy::Dns::Infoblox
     end
 
     def create_a_record(fqdn, ip)
-      case a_record_conflicts(fqdn, ip) #returns -1, 0, 1
+      case a_record_conflicts(fqdn.to_s, ip.to_s) #returns -1, 0, 1
       when 1
         raise(Proxy::Dns::Collision, "'#{fqdn} 'is already in use")
       when 0 then
@@ -20,7 +20,7 @@ module Proxy::Dns::Infoblox
     end
 
     def create_ptr_record(fqdn, ptr)
-      case ptr_record_conflicts(fqdn, ptr_to_ip(ptr)) #returns -1, 0, 1
+      case ptr_record_conflicts(fqdn.to_s, ptr_to_ip(ptr).to_s) #returns -1, 0, 1
       when 1
         raise(Proxy::Dns::Collision, "'#{fqdn} 'is already in use")
       when 0 then
