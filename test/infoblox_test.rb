@@ -10,35 +10,31 @@ class InfobloxTest < Test::Unit::TestCase
   end
 
   def setup
-    @connection = Object.new
-    @record = DummyRecord.new
-    @provider = Proxy::Dns::Infoblox::Record.new('a_host', @connection, 999)
+    @provider = Proxy::Dns::Infoblox::Record.new('a_host', nil, 999)
   end
 
   def test_create_a
     fqdn = 'test.example.com'
     ip = '10.1.1.1'
 
-    @provider.expects(:a_record_conflicts).with(fqdn, ip).returns(-1)
-    @provider.expects(:do_create).with(Infoblox::Arecord, :connection => @connection, :name => fqdn, :ipv4addr => ip)
-
-    @provider.create_a_record(fqdn, ip)
+    @provider.expects(:ib_create).with(Infoblox::Arecord, :name => fqdn, :ipv4addr => ip)
+    @provider.do_create(fqdn, ip, 'A')
   end
 
-  def test_create_a_conflicting_record
+  def test_create_aaaa
     fqdn = 'test.example.com'
-    ip = '10.1.1.1'
+    ip = '2002:fc80::2'
 
-    @provider.expects(:a_record_conflicts).with(fqdn, ip).returns(1)
-    assert_raises(Proxy::Dns::Collision) { @provider.create_a_record(fqdn, ip) }
+    @provider.expects(:ib_create).with(Infoblox::AAAArecord, :name => fqdn, :ipv6addr => ip)
+    @provider.do_create(fqdn, ip, 'AAAA')
   end
 
-  def test_create_a_already_exists
+  def test_create_cname
     fqdn = 'test.example.com'
-    ip = '10.1.1.1'
+    target = 'test-2.example.com'
 
-    @provider.expects(:a_record_conflicts).with(fqdn, ip).returns(0)
-    assert_nil @provider.create_a_record(fqdn, ip)
+    @provider.expects(:ib_create).with(Infoblox::Cname, :name => fqdn, :canonical => target)
+    @provider.do_create(fqdn, target, 'CNAME')
   end
 
   def test_create_ptr
@@ -46,70 +42,53 @@ class InfobloxTest < Test::Unit::TestCase
     ptr = '1.1.1.10.in-addr.arpa'
     ip = '10.1.1.1'
 
-    @provider.expects(:ptr_record_conflicts).with(fqdn, ip).returns(-1)
-    @provider.expects(:do_create).with(Infoblox::Ptr, :connection => @connection, :ptrdname => fqdn, :ipv4addr => ip)
-
-    @provider.create_ptr_record(fqdn, ptr)
+    @provider.expects(:ib_create).with(Infoblox::Ptr, :ptrdname => fqdn, :ipv4addr => ip, :ipv6addr => nil)
+    @provider.do_create(ptr, fqdn, 'PTR')
   end
 
-  def test_create_ptr_conflicting_record
+  def test_create_ptr_v6
     fqdn = 'test.example.com'
-    ptr = '1.1.1.10.in-addr.arpa'
-    ip = '10.1.1.1'
+    ptr = '8.0.0.0.7.0.0.0.6.0.0.0.5.0.0.0.4.0.0.0.3.0.0.0.2.0.0.0.1.0.0.0.ip6.arpa'
+    ip = '1:2:3:4:5:6:7:8'
 
-    @provider.expects(:ptr_record_conflicts).with(fqdn, ip).returns(1)
-    assert_raises(Proxy::Dns::Collision) { @provider.create_ptr_record(fqdn, ptr) }
-  end
-
-  def test_create_ptr_already_exists
-    fqdn = 'test.example.com'
-    ptr = '1.1.1.10.in-addr.arpa'
-    ip = '10.1.1.1'
-
-    @provider.expects(:ptr_record_conflicts).with(fqdn, ip).returns(0)
-    assert_nil @provider.create_ptr_record(fqdn, ptr)
+    @provider.expects(:ib_create).with(Infoblox::Ptr, :ptrdname => fqdn, :ipv4addr => nil, :ipv6addr => ip)
+    @provider.do_create(ptr, fqdn, 'PTR')
   end
 
   def test_remove_a
     fqdn = 'test.example.com'
-    Infoblox::Arecord.expects(:find).with(@connection, :name => fqdn, :_max_results => 1).returns([@record])
-    @record.expects(:delete).returns(true)
-    @provider.remove_a_record(fqdn)
+
+    @provider.expects(:ib_delete).with(Infoblox::Arecord, :name => fqdn)
+    @provider.do_remove(fqdn, 'A')
   end
 
-  def test_remove_a_not_found
+  def test_remove_aaaa
     fqdn = 'test.example.com'
-    Infoblox::Arecord.expects(:find).with(@connection, :name => fqdn, :_max_results => 1).returns([])
-    assert_raises(Proxy::Dns::NotFound) { @provider.remove_a_record(fqdn) }
+
+    @provider.expects(:ib_delete).with(Infoblox::AAAArecord, :name => fqdn)
+    @provider.do_remove(fqdn, 'AAAA')
   end
 
-  def test_remove_a_returns_with_a_non_200_status
+  def test_remove_cname
     fqdn = 'test.example.com'
-    Infoblox::Arecord.expects(:find).with(@connection, :name => fqdn, :_max_results => 1).returns([@record])
-    @record.expects(:delete).returns(false)
-    assert_raises(Proxy::Dns::NotFound) { @provider.remove_a_record(fqdn) }
+
+    @provider.expects(:ib_delete).with(Infoblox::Cname, :name => fqdn)
+    @provider.do_remove(fqdn, 'CNAME')
   end
 
   def test_remove_ptr
     ptr = '1.1.1.10.in-addr.arpa'
     ip = '10.1.1.1'
-    Infoblox::Ptr.expects(:find).with(@connection, :ipv4addr => ip, :_max_results => 1).returns([@record])
-    @record.expects(:delete).returns(true)
-    @provider.remove_ptr_record(ptr)
+
+    @provider.expects(:ib_delete).with(Infoblox::Ptr, :ipv4addr => ip, :ipv6addr => nil)
+    @provider.do_remove(ptr, 'PTR')
   end
 
-  def test_remove_ptr_not_found
-    ptr = '1.1.1.10.in-addr.arpa'
-    ip = '10.1.1.1'
-    Infoblox::Ptr.expects(:find).with(@connection, :ipv4addr => ip, :_max_results => 1).returns([])
-    assert_raises(Proxy::Dns::NotFound) { @provider.remove_ptr_record(ptr) }
-  end
+  def test_remove_ptr_v6
+    ptr = '8.0.0.0.7.0.0.0.6.0.0.0.5.0.0.0.4.0.0.0.3.0.0.0.2.0.0.0.1.0.0.0.ip6.arpa'
+    ip = '1:2:3:4:5:6:7:8'
 
-  def test_remove_ptr_returns_with_a_non_200_status
-    ptr = '1.1.1.10.in-addr.arpa'
-    ip = '10.1.1.1'
-    Infoblox::Ptr.expects(:find).with(@connection, :ipv4addr => ip, :_max_results => 1).returns([@record])
-    @record.expects(:delete).returns(false)
-    assert_raises(Proxy::Dns::NotFound) { @provider.remove_ptr_record(ptr) }
+    @provider.expects(:ib_delete).with(Infoblox::Ptr, :ipv4addr => nil, :ipv6addr => ip)
+    @provider.do_remove(ptr, 'PTR')
   end
 end

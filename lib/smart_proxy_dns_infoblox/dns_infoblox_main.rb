@@ -8,51 +8,65 @@ module Proxy::Dns::Infoblox
       super(host, ttl)
     end
 
-    def create_a_record(fqdn, ip)
-      case a_record_conflicts(fqdn, ip) #returns -1, 0, 1
-      when 1
-        raise(Proxy::Dns::Collision, "'#{fqdn} 'is already in use")
-      when 0 then
-        return nil
-      else
-        do_create(Infoblox::Arecord, :connection => connection, :name => fqdn, :ipv4addr => ip)
-      end
+    def do_create(name, value, type)
+      method = "ib_create_#{type.downcase}_record".to_sym
+      raise(Proxy::Dns::Error, "Creation of #{type} records not implemented") unless respond_to?(method, true)
+      send(method, name, value)
     end
 
-    def create_ptr_record(fqdn, ptr)
-      case ptr_record_conflicts(fqdn, ptr_to_ip(ptr)) #returns -1, 0, 1
-      when 1
-        raise(Proxy::Dns::Collision, "'#{fqdn} 'is already in use")
-      when 0 then
-        return nil
-      else
-        do_create(Infoblox::Ptr, :connection => connection, :ptrdname => fqdn, :ipv4addr => ptr_to_ip(ptr))
-      end
-      # FIXME: add a reverse 'PTR' record with ip, fqdn
+    def do_remove(name, type)
+      method = "ib_remove_#{type.downcase}_record".to_sym
+      raise(Proxy::Dns::Error, "Deletion of #{type} records not implemented") unless respond_to?(method, true)
+      send(method, name)
     end
 
-    def remove_a_record(fqdn)
-      do_delete(Infoblox::Arecord.find(connection, :name => fqdn, :_max_results => 1).first, fqdn)
+    private
+
+    def ib_create_a_record(fqdn, address)
+      ib_create(Infoblox::Arecord, :name => fqdn, :ipv4addr => address)
     end
 
-    def remove_ptr_record(ptr)
-      ptr_record = Infoblox::Ptr.find(connection, :ipv4addr => ptr_to_ip(ptr), :_max_results => 1).first
-      unless ptr_record.nil?
-        ptr_record.ipv6addr = nil
-        ptr_record.view = nil
-      end
-
-      do_delete(ptr_record, ptr)
-      # FIXME: remove the reverse 'PTR' record with ip
+    def ib_remove_a_record(fqdn)
+      ib_delete(Infoblox::Arecord, :name => fqdn)
     end
 
-    def do_create(clazz, params)
-      clazz.new(params).post
+    def ib_create_aaaa_record(fqdn, address)
+      ib_create(Infoblox::AAAArecord, :name => fqdn, :ipv6addr => address)
     end
 
-    def do_delete(record, id)
-      raise Proxy::Dns::NotFound, "Cannot find DNS entry for #{id}" if record.nil?
-      record.delete || (raise Proxy::Dns::NotFound, "Cannot find DNS entry for #{id}")
+    def ib_remove_aaaa_record(fqdn)
+      ib_delete(Infoblox::AAAArecord, :name => fqdn)
+    end
+
+    def ib_create_cname_record(fqdn, target)
+      ib_create(Infoblox::Cname, :name => fqdn, :canonical => target)
+    end
+
+    def ib_remove_cname_record(fqdn)
+      ib_delete(Infoblox::Cname, :name => fqdn)
+    end
+
+    def ib_create_ptr_record(ptr, fqdn)
+      ip = IPAddr.new(ptr_to_ip(ptr))
+      ib_create(Infoblox::Ptr, :ptrdname => fqdn,
+                               :ipv4addr => (ip.ipv4? && ip.to_s || nil),
+                               :ipv6addr => (ip.ipv6? && ip.to_s || nil))
+    end
+
+    def ib_remove_ptr_record(ptr)
+      ip = IPAddr.new(ptr_to_ip(ptr))
+      ib_delete(Infoblox::Ptr, :ipv4addr => (ip.ipv4? && ip.to_s || nil), :ipv6addr => (ip.ipv6? && ip.to_s || nil))
+    end
+
+    def ib_create(clazz, params)
+      clazz.new({ :connection => connection }.merge(params)).post
+    end
+
+    def ib_delete(clazz, params)
+      record = clazz.find(connection, params.merge(:_max_results => 1)).first
+
+      raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}" if record.nil?
+      record.delete || (raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}")
     end
   end
 end
