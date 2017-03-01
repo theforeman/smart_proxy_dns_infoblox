@@ -42,7 +42,7 @@ class InfobloxTest < Test::Unit::TestCase
     ptr = '1.1.1.10.in-addr.arpa'
     ip = '10.1.1.1'
 
-    @provider.expects(:ib_create).with(Infoblox::Ptr, :ptrdname => fqdn, :ipv4addr => ip, :ipv6addr => nil)
+    @provider.expects(:ib_create).with(Infoblox::Ptr, :name => ptr, :ptrdname => fqdn, :ipv4addr => ip)
     @provider.do_create(ptr, fqdn, 'PTR')
   end
 
@@ -51,7 +51,7 @@ class InfobloxTest < Test::Unit::TestCase
     ptr = '8.0.0.0.7.0.0.0.6.0.0.0.5.0.0.0.4.0.0.0.3.0.0.0.2.0.0.0.1.0.0.0.ip6.arpa'
     ip = '1:2:3:4:5:6:7:8'
 
-    @provider.expects(:ib_create).with(Infoblox::Ptr, :ptrdname => fqdn, :ipv4addr => nil, :ipv6addr => ip)
+    @provider.expects(:ib_create).with(Infoblox::Ptr, :name => ptr, :ptrdname => fqdn, :ipv6addr => ip)
     @provider.do_create(ptr, fqdn, 'PTR')
   end
 
@@ -80,7 +80,7 @@ class InfobloxTest < Test::Unit::TestCase
     ptr = '1.1.1.10.in-addr.arpa'
     ip = '10.1.1.1'
 
-    @provider.expects(:ib_delete).with(Infoblox::Ptr, :ipv4addr => ip, :ipv6addr => nil)
+    @provider.expects(:ib_delete).with(Infoblox::Ptr, :ipv4addr => ip)
     @provider.do_remove(ptr, 'PTR')
   end
 
@@ -88,7 +88,7 @@ class InfobloxTest < Test::Unit::TestCase
     ptr = '8.0.0.0.7.0.0.0.6.0.0.0.5.0.0.0.4.0.0.0.3.0.0.0.2.0.0.0.1.0.0.0.ip6.arpa'
     ip = '1:2:3:4:5:6:7:8'
 
-    @provider.expects(:ib_delete).with(Infoblox::Ptr, :ipv4addr => nil, :ipv6addr => ip)
+    @provider.expects(:ib_delete).with(Infoblox::Ptr, :ipv6addr => ip)
     @provider.do_remove(ptr, 'PTR')
   end
 end
