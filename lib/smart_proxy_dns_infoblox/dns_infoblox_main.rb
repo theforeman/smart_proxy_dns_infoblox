@@ -48,14 +48,23 @@ module Proxy::Dns::Infoblox
 
     def ib_create_ptr_record(ptr, fqdn)
       ip = IPAddr.new(ptr_to_ip(ptr))
-      ib_create(Infoblox::Ptr, :ptrdname => fqdn,
-                               :ipv4addr => (ip.ipv4? && ip.to_s || nil),
-                               :ipv6addr => (ip.ipv6? && ip.to_s || nil))
+
+      params = {
+        :ptrdname => fqdn,
+        :name => ptr
+      }
+      params["ipv#{ip.ipv4? ? 4 : 6}addr".to_sym] = ip.to_s
+
+      ib_create(Infoblox::Ptr, params)
     end
 
     def ib_remove_ptr_record(ptr)
       ip = IPAddr.new(ptr_to_ip(ptr))
-      ib_delete(Infoblox::Ptr, :ipv4addr => (ip.ipv4? && ip.to_s || nil), :ipv6addr => (ip.ipv6? && ip.to_s || nil))
+
+      params = {}
+      params["ipv#{ip.ipv4? ? 4 : 6}addr".to_sym] = ip.to_s
+
+      ib_delete(Infoblox::Ptr, params)
     end
 
     def ib_create(clazz, params)
