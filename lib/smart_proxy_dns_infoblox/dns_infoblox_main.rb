@@ -2,9 +2,10 @@ module Proxy::Dns::Infoblox
   class Record < ::Proxy::Dns::Record
     attr_reader :connection
 
-    def initialize(host, connection, ttl)
+    def initialize(host, connection, ttl, view = 'default')
       ENV['WAPI_VERSION']='1.4.2'
       @connection = connection
+      @view = view
       super(host, ttl)
     end
 
@@ -61,18 +62,18 @@ module Proxy::Dns::Infoblox
     def ib_remove_ptr_record(ptr)
       ip = IPAddr.new(ptr_to_ip(ptr))
 
-      params = {}
+      params = { }
       params["ipv#{ip.ipv4? ? 4 : 6}addr".to_sym] = ip.to_s
 
       ib_delete(Infoblox::Ptr, params)
     end
 
     def ib_create(clazz, params)
-      clazz.new({ :connection => connection }.merge(params)).post
+      clazz.new({ :connection => connection, :view => view }.merge(params)).post
     end
 
     def ib_delete(clazz, params)
-      record = clazz.find(connection, params.merge(:_max_results => 1)).first
+      record = clazz.find(connection, params.merge(:_max_results => 1, :view => view)).first
 
       raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}" if record.nil?
       record.delete || (raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}")

@@ -19,7 +19,8 @@ module Proxy::Dns::Infoblox
                                     lambda {::Proxy::Dns::Infoblox::Record.new(
                                         settings[:dns_server],
                                         container_instance.get_dependency(:connection),
-                                        settings[:dns_ttl]) }
+                                        settings[:dns_ttl],
+					settings[:dns_view]) }
     end
   end
 end

@@ -6,3 +6,4 @@
 :username: "infoblox"
 :password: "infoblox"
 :dns_server: "infoblox.my.domain"
+:view: "default"
