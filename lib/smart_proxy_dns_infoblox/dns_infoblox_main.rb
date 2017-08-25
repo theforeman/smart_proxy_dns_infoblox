@@ -1,6 +1,6 @@
 module Proxy::Dns::Infoblox
   class Record < ::Proxy::Dns::Record
-    attr_reader :connection
+    attr_reader :connection, :view
 
     def initialize(host, connection, ttl, view = 'default')
       ENV['WAPI_VERSION']='1.4.2'
