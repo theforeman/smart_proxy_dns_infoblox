@@ -3,7 +3,7 @@ module Proxy::Dns::Infoblox
     attr_reader :connection
 
     def initialize(host, connection, ttl)
-      ENV['WAPI_VERSION']='2.0'
+      ENV['WAPI_VERSION']='1.4.2'
       @connection = connection
       super(host, ttl)
     end

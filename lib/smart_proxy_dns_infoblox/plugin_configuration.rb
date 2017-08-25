@@ -9,7 +9,7 @@ module Proxy::Dns::Infoblox
     def load_dependency_injection_wirings(container_instance, settings)
       container_instance.dependency :connection,
                                     (lambda do
-                                      ::Infoblox.wapi_version = '2.0'
+                                      ::Infoblox.wapi_version = '1.4.2'
                                       ::Infoblox::Connection.new(:username => settings[:username],
                                                                  :password => settings[:password],
                                                                  :host => settings[:dns_server],
