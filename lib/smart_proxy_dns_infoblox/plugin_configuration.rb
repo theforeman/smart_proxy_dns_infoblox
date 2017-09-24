@@ -20,7 +20,7 @@ module Proxy::Dns::Infoblox
                                         settings[:dns_server],
                                         container_instance.get_dependency(:connection),
                                         settings[:dns_ttl],
-					settings[:dns_view]) }
+                                        settings[:dns_view]) }
     end
   end
 end

@@ -1,11 +1,11 @@
 module Proxy::Dns::Infoblox
   class Record < ::Proxy::Dns::Record
-    attr_reader :connection, :view
+    attr_reader :connection, :dns_view
 
-    def initialize(host, connection, ttl, view = 'default')
+    def initialize(host, connection, ttl, dns_view = 'default')
       ENV['WAPI_VERSION']='1.4.2'
       @connection = connection
-      @view = view
+      @dns_view = dns_view
       super(host, ttl)
     end
 
@@ -73,7 +73,7 @@ module Proxy::Dns::Infoblox
     end
 
     def ib_delete(clazz, params)
-      record = clazz.find(connection, params.merge(:_max_results => 1, :view => view)).first
+      record = clazz.find(connection, params.merge(:_max_results => 1, :view => dns_view)).first
 
       raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}" if record.nil?
       record.delete || (raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}")
