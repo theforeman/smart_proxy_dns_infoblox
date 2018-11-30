@@ -11,6 +11,16 @@ for how to install Smart Proxy plugins
 
 This plugin is compatible with Smart Proxy 1.10 or higher.
 
+Example installation command via foreman-installer:
+
+```
+# foreman-installer --enable-foreman-proxy-plugin-dns-infoblox \
+--foreman-proxy-dns-provider infoblox \
+--foreman-proxy-plugin-dns-infoblox-dns-server 192.168.201.2 \
+--foreman-proxy-plugin-dns-infoblox-username admin \
+--foreman-proxy-plugin-dns-infoblox-password infoblox
+```
+
 ## Configuration
 
 To enable this DNS provider, edit `/etc/foreman-proxy/settings.d/dns.yml` and set:
@@ -20,6 +30,43 @@ To enable this DNS provider, edit `/etc/foreman-proxy/settings.d/dns.yml` and se
 Configuration options for this plugin are in `/etc/foreman-proxy/settings.d/dns_infoblox.yml` and include:
 
 * example_setting: change this as an example
+
+## SSL
+
+The plugin enforces HTTPS server certificate verification. Follow a standard CA cert installation procedure for your operating system. It's possible to either download the server certificate from Infoblox web UI or use openssl command to extract it from server response. Here are example steps for Red Hat compatible systems:
+
+```
+# update-ca-trust enable
+# openssl s_client -showcerts -connect 192.168.201.2:443 </dev/null | openssl x509 -text >/etc/pki/ca-trust/source/anchors/infoblox.crt
+# update-ca-trust extract
+```
+
+For Debian-compatible systems:
+
+```
+# openssl s_client -showcerts -connect 192.168.201.2:443 </dev/null | openssl x509 -text >/usr/local/share/ca-certificates/infoblox.crt
+# update-ca-certificates
+```
+
+To test the CA certificate, a simple curl query can be used. This is a positive test:
+
+```
+# curl -u admin:infoblox https://192.168.201.2/wapi/v2.0/network
+[
+    {
+        "_ref": "network/ZG5zLm5ldHdvcmskMTkyLjE2OC4yMDIuMC8yNC8w:192.168.202.0/24/default",
+        "network": "192.168.202.0/24",
+        "network_view": "default"
+    }
+]
+```
+
+And a negative one:
+
+```
+# curl -u admin:infoblox https://192.168.201.2/wapi/v2.0/network
+curl: (60) SSL certificate problem: self signed certificate
+```
 
 ## Contributing
 

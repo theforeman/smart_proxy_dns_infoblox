@@ -15,7 +15,7 @@ class InfobloxProviderWiringTest < Test::Unit::TestCase
     assert_equal 'user', connection.username
     assert_equal 'password', connection.password
     assert_equal 'https://a_host', connection.host
-    assert_equal({:verify => false}, connection.ssl_opts)
+    assert_equal({:verify => true}, connection.ssl_opts)
   end
 
   def test_dns_provider_wiring

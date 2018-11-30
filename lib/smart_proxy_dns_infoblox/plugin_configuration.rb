@@ -13,7 +13,8 @@ module Proxy::Dns::Infoblox
                                       ::Infoblox::Connection.new(:username => settings[:username],
                                                                  :password => settings[:password],
                                                                  :host => settings[:dns_server],
-                                                                 :ssl_opts => {:verify => false})
+                                                                 :ssl_opts => {:verify => true},
+                                                                 :logger => ::Proxy::LogBuffer::Decorator.instance)
                                     end)
       container_instance.dependency :dns_provider,
                                     lambda {::Proxy::Dns::Infoblox::Record.new(
