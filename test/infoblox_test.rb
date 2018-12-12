@@ -3,7 +3,6 @@ require 'dns_common/dns_common'
 require 'infoblox'
 require 'smart_proxy_dns_infoblox/dns_infoblox_main'
 
-
 class InfobloxTest < Test::Unit::TestCase
   class DummyRecord
     attr_accessor :ipv6addr, :view

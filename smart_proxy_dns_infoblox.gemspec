@@ -15,4 +15,6 @@ Gem::Specification.new do |s|
 
   s.files       = Dir['{config,lib,bundler.d}/**/*'] + ['README.md', 'LICENSE']
   s.test_files  = Dir['test/**/*']
+
+  s.add_development_dependency('rubocop', '~> 0.50.0')
 end

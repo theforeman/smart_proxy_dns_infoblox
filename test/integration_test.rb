@@ -8,7 +8,8 @@ require 'json'
 module Proxy::Dns
   module DependencyInjection
     include Proxy::DependencyInjection::Accessors
-    def container_instance; end
+    def container_instance
+    end
   end
 end
 
@@ -20,7 +21,8 @@ class IntegrationTest < ::Test::Unit::TestCase
   include Rack::Test::Methods
 
   class DnsProviderForTesting < Proxy::Dns::Infoblox::Record
-    def initialize; end
+    def initialize
+    end
   end
 
   def app
