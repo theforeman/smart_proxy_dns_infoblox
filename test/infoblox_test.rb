@@ -2,6 +2,7 @@ require 'test_helper'
 require 'dns_common/dns_common'
 require 'infoblox'
 require 'smart_proxy_dns_infoblox/dns_infoblox_main'
+require 'smart_proxy_dns_infoblox/infoblox_member_dns'
 
 class InfobloxTest < Test::Unit::TestCase
   class DummyRecord
@@ -89,5 +90,31 @@ class InfobloxTest < Test::Unit::TestCase
 
     @provider.expects(:ib_delete).with(Infoblox::Ptr, :ipv6addr => ip)
     @provider.do_remove(ptr, 'PTR')
+  end
+
+  def test_wapi_old
+    fqdn = 'test.example.com'
+    record = Infoblox::Arecord.new name: fqdn
+    record.stubs(:delete).returns(record)
+
+    Infoblox.wapi_version = '2.0'
+
+    Infoblox::Arecord.expects(:find).returns([record])
+    Proxy::Dns::Infoblox::MemberDns.expects(:all).never
+    @provider.do_remove(fqdn, 'A')
+  end
+
+  def test_wapi_new
+    fqdn = 'test.example.com'
+    record = Infoblox::Arecord.new name: fqdn, view: 'test'
+    record.stubs(:delete).returns(record)
+    member = Proxy::Dns::Infoblox::MemberDns.new name: 'ns1.example.com'
+
+    Infoblox.wapi_version = '2.7'
+
+    Infoblox::Arecord.expects(:find).returns([record])
+    Proxy::Dns::Infoblox::MemberDns.expects(:all).returns([member])
+    member.expects(:clear_dns_cache).with(view: 'test', domain: fqdn)
+    @provider.do_remove(fqdn, 'A')
   end
 end
