@@ -4,6 +4,7 @@ module Proxy::Dns::Infoblox
       require 'infoblox'
       require 'dns_common/dns_common'
       require 'smart_proxy_dns_infoblox/dns_infoblox_main'
+      require 'smart_proxy_dns_infoblox/infoblox_member_dns'
     end
 
     def load_dependency_injection_wirings(container_instance, settings)
