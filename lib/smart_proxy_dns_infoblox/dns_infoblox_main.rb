@@ -88,7 +88,7 @@ module Proxy::Dns::Infoblox
       end
     rescue StandardError => ex
       # Failing to clear the DNS cache should never be an error
-      log.warn("Exception #{ex} was raised when clearing DNS cache")
+      logger.warn("Exception #{ex} was raised when clearing DNS cache")
     end
   end
 end
