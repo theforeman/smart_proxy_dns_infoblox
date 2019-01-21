@@ -74,9 +74,11 @@ module Proxy::Dns::Infoblox
       record = clazz.find(connection, params.merge(:_max_results => 1)).first
 
       raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}" if record.nil?
-      record.delete || (raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}")
+      ret_value = record.delete || (raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}")
 
       ib_clear_dns_cache(record)
+
+      ret_value
     end
 
     def ib_clear_dns_cache(record)
