@@ -97,11 +97,14 @@ class InfobloxTest < Test::Unit::TestCase
     record = Infoblox::Arecord.new name: fqdn
     record.stubs(:delete).returns(record)
 
+    old_version = Infoblox.wapi_version 
     Infoblox.wapi_version = '2.0'
 
     Infoblox::Arecord.expects(:find).returns([record])
     Proxy::Dns::Infoblox::MemberDns.expects(:all).never
     @provider.do_remove(fqdn, 'A')
+  ensure
+    Infoblox.wapi_version = old_version
   end
 
   def test_wapi_new
@@ -110,11 +113,14 @@ class InfobloxTest < Test::Unit::TestCase
     record.stubs(:delete).returns(record)
     member = Proxy::Dns::Infoblox::MemberDns.new name: 'ns1.example.com'
 
+    old_version = Infoblox.wapi_version 
     Infoblox.wapi_version = '2.7'
 
     Infoblox::Arecord.expects(:find).returns([record])
     Proxy::Dns::Infoblox::MemberDns.expects(:all).returns([member])
     member.expects(:clear_dns_cache).with(view: 'test', domain: fqdn)
     @provider.do_remove(fqdn, 'A')
+  ensure
+    Infoblox.wapi_version = old_version
   end
 end
