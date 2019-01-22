@@ -97,7 +97,7 @@ class InfobloxTest < Test::Unit::TestCase
     record = Infoblox::Arecord.new name: fqdn
     record.stubs(:delete).returns(record)
 
-    old_version = Infoblox.wapi_version 
+    old_version = Infoblox.wapi_version
     Infoblox.wapi_version = '2.0'
 
     Infoblox::Arecord.expects(:find).returns([record])
@@ -113,7 +113,7 @@ class InfobloxTest < Test::Unit::TestCase
     record.stubs(:delete).returns(record)
     member = Proxy::Dns::Infoblox::MemberDns.new name: 'ns1.example.com'
 
-    old_version = Infoblox.wapi_version 
+    old_version = Infoblox.wapi_version
     Infoblox.wapi_version = '2.7'
 
     Infoblox::Arecord.expects(:find).returns([record])
