@@ -74,7 +74,23 @@ module Proxy::Dns::Infoblox
       record = clazz.find(connection, params.merge(:_max_results => 1)).first
 
       raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}" if record.nil?
-      record.delete || (raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}")
+      ret_value = record.delete || (raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}")
+
+      ib_clear_dns_cache(record)
+
+      ret_value
+    end
+
+    def ib_clear_dns_cache(record)
+      # Created in WAPI version 2.6
+      return if Gem::Version.new(Infoblox.wapi_version) < Gem::Version.new('2.6')
+
+      MemberDns.all(connection).each do |member|
+        member.clear_dns_cache(view: record.view, domain: record.name)
+      end
+    rescue StandardError => ex
+      # Failing to clear the DNS cache should never be an error
+      logger.warn("Exception #{ex} was raised when clearing DNS cache")
     end
   end
 end
