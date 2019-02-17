@@ -5,4 +5,5 @@
 
 :username: "infoblox"
 :password: "infoblox"
-:dns_server: "infoblox.my.domain"
+:dns_server: "dns_server.my.domain"
+:infoblox_host: "infoblox.my.domain"
