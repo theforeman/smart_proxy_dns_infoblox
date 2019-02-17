@@ -12,7 +12,7 @@ module Proxy::Dns::Infoblox
                                     (lambda do
                                       ::Infoblox.wapi_version = '2.0'
                                       ::Infoblox::Connection.new(:username => settings[:username],
-								 :password => settings[:password],
+                                                                 :password => settings[:password],
                                                                  :host => settings[:infoblox_host] || settings[:dns_server],
                                                                  :ssl_opts => { :verify => true },
                                                                  :logger => ::Proxy::LogBuffer::Decorator.instance)

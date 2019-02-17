@@ -17,6 +17,7 @@ Example installation command via foreman-installer:
 # foreman-installer --enable-foreman-proxy-plugin-dns-infoblox \
 --foreman-proxy-dns-provider infoblox \
 --foreman-proxy-plugin-dns-infoblox-dns-server 192.168.201.2 \
+--foreman-proxy-plugin-dns-infoblox-infoblox-host 192.168.201.3 \
 --foreman-proxy-plugin-dns-infoblox-username admin \
 --foreman-proxy-plugin-dns-infoblox-password infoblox
 ```
@@ -88,4 +89,3 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
