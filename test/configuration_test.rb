@@ -9,9 +9,9 @@ class InfobloxProviderWiringTest < Test::Unit::TestCase
   end
 
   def test_connection_wiring
-    @config.load_dependency_injection_wirings(@container, :username => 'user', :password => 'password', :infoblox_host => 'a_host')
+    @config.load_dependency_injection_wirings(@container, :username => 'user', :password => 'password', :infoblox_host || :dns_server => 'a_host')
     connection = @container.get_dependency(:connection)
-
+	puts "#{connection.password}"
     assert_equal 'user', connection.username
     assert_equal 'password', connection.password
     assert_equal 'https://a_host', connection.host
