@@ -1,8 +1,12 @@
 ---
-#
-# Configuration file for 'infoblox dns provider
-#
+# Configuration file for 'dns_infoblox' dhcp provider
 
-:username: "infoblox"
+# Credentials for Infoblox API, make sure the DNS Role is assigned
+:username: "admin"
 :password: "infoblox"
-:dns_server: "infoblox.my.domain"
+
+# Hostname or IP address of the Infoblox appliance (without https:// or port)
+:dns_server: "infoblox.example.com"
+
+# View used for records, usually 'default.myview' for custom names.
+#:dns_view: 'default'

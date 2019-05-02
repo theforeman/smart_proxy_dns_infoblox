@@ -18,7 +18,8 @@ Example installation command via foreman-installer:
 --foreman-proxy-dns-provider infoblox \
 --foreman-proxy-plugin-dns-infoblox-dns-server 192.168.201.2 \
 --foreman-proxy-plugin-dns-infoblox-username admin \
---foreman-proxy-plugin-dns-infoblox-password infoblox
+--foreman-proxy-plugin-dns-infoblox-password infoblox \
+--foreman-proxy-plugin-dns-infoblox-dns-view default
 ```
 
 ## Configuration
@@ -27,9 +28,7 @@ To enable this DNS provider, edit `/etc/foreman-proxy/settings.d/dns.yml` and se
 
     :use_provider: dns_infoblox
 
-Configuration options for this plugin are in `/etc/foreman-proxy/settings.d/dns_infoblox.yml` and include:
-
-* example_setting: change this as an example
+Configuration options for this plugin are in `/etc/foreman-proxy/settings.d/dns_infoblox.yml`, see the [example configuration file](config/dns_infoblox.yml.example) for more details.
 
 ## SSL
 
@@ -74,7 +73,7 @@ Fork and send a Pull Request. Thanks!
 
 ## Copyright
 
-Copyright (c) *year* *your name*
+Copyright (c) 2018 Red Hat
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
