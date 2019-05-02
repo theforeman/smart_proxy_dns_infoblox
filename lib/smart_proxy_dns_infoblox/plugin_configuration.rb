@@ -22,7 +22,8 @@ module Proxy::Dns::Infoblox
                                       ::Proxy::Dns::Infoblox::Record.new(
                                         settings[:dns_server],
                                         container_instance.get_dependency(:connection),
-                                        settings[:dns_ttl]) }
+                                        settings[:dns_ttl],
+                                        settings[:dns_view])}
     end
   end
 end

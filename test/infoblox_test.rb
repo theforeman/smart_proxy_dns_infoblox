@@ -10,7 +10,7 @@ class InfobloxTest < Test::Unit::TestCase
   end
 
   def setup
-    @provider = Proxy::Dns::Infoblox::Record.new('a_host', nil, 999)
+    @provider = Proxy::Dns::Infoblox::Record.new('a_host', nil, 999, 'default.test')
   end
 
   def test_create_a
