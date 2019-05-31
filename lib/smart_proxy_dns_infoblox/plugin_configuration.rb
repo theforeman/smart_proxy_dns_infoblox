@@ -15,6 +15,7 @@ module Proxy::Dns::Infoblox
                                                                  :password => settings[:password],
                                                                  :host => settings[:dns_server],
                                                                  :ssl_opts => { :verify => true },
+                                                                 :timeout => settings[:timeout],
                                                                  :logger => ::Proxy::LogBuffer::Decorator.instance)
                                     end)
       container_instance.dependency :dns_provider,

@@ -5,6 +5,9 @@
 :username: "admin"
 :password: "infoblox"
 
+# Connection, read and write HTTP timeout
+#:timeout: 60
+
 # IP address of the Infoblox appliance (without https:// or port). If set
 # to hostname, make sure it resolves correctly.
 :dns_server: "1.2.3.4"
