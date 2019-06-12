@@ -12,12 +12,14 @@ module Proxy::Dns::Infoblox
       method = "ib_create_#{type.downcase}_record".to_sym
       raise(Proxy::Dns::Error, "Creation of #{type} records not implemented") unless respond_to?(method, true)
       send(method, name, value)
+      nil
     end
 
     def do_remove(name, type)
       method = "ib_remove_#{type.downcase}_record".to_sym
       raise(Proxy::Dns::Error, "Deletion of #{type} records not implemented") unless respond_to?(method, true)
       send(method, name)
+      nil
     end
 
     private
