@@ -1,10 +1,20 @@
 module Proxy::Dns::Infoblox
   class PluginConfiguration
     def load_classes
+      require 'ipaddr'
+      require 'resolv'
       require 'infoblox'
       require 'dns_common/dns_common'
       require 'smart_proxy_dns_infoblox/dns_infoblox_main'
       require 'smart_proxy_dns_infoblox/infoblox_member_dns'
+    end
+
+    def get_dns_server_ip(dns_server)
+      begin
+        IPAddr.new(dns_server).to_s
+      rescue IPAddr::InvalidAddressError
+        Resolv.getaddresses(dns_server).first
+      end
     end
 
     def load_dependency_injection_wirings(container_instance, settings)
@@ -20,7 +30,7 @@ module Proxy::Dns::Infoblox
       container_instance.dependency :dns_provider,
                                     lambda {
                                       ::Proxy::Dns::Infoblox::Record.new(
-                                        settings[:dns_server],
+                                        get_dns_server_ip(settings[:dns_server]),
                                         container_instance.get_dependency(:connection),
                                         settings[:dns_ttl],
                                         settings[:dns_view])}
