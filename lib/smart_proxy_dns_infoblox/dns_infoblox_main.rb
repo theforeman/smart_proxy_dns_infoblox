@@ -5,7 +5,7 @@ module Proxy::Dns::Infoblox
     def initialize(host, connection, ttl, dns_view)
       @connection = connection
       @dns_view = dns_view
-      super(host, ttl)
+      super(ENV['INFOBLOX_DNS_RESOLVER'] || host, ttl)
     end
 
     def do_create(name, value, type)
