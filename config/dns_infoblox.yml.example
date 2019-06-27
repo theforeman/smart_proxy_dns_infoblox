@@ -5,13 +5,8 @@
 :username: "admin"
 :password: "infoblox"
 
-# IP address of the Infoblox appliance (without https:// or port) and a DNS
-# server for conflict queries. If set to hostname, make sure this is set
-# in /etc/hosts because the module performs DNS queries against this address.
-# If this Infoblox server does not provide DNS resolver, set environmental
-# variable INFOBLOX_DNS_RESOLVER=2.3.4.5 to override this setting to do
-# DNS lookups on a different IP address. This is a temporary workaround until
-# DNS core API is modified to allow DNS conflict lookups.
+# IP address of the Infoblox appliance (without https:// or port). If set
+# to hostname, make sure it resolves correctly.
 :dns_server: "1.2.3.4"
 
 # View used for records, usually 'default.myview' for custom names.

@@ -5,7 +5,7 @@ module Proxy::Dns::Infoblox
     def initialize(host, connection, ttl, dns_view)
       @connection = connection
       @dns_view = dns_view
-      super(ENV['INFOBLOX_DNS_RESOLVER'] || host, ttl)
+      super(host, ttl)
     end
 
     def do_create(name, value, type)
@@ -20,7 +20,71 @@ module Proxy::Dns::Infoblox
       send(method, name)
     end
 
+    # -1 = no conflict and create the record
+    #  0 = already exists and do nothing
+    #  1 = conflict and error out
+    def record_conflicts_ip(fqdn, type, address)
+      method = "ib_find_#{type.name.split('::').last.downcase}_record".to_sym
+      raise(Proxy::Dns::Error, "Finding of #{type} records not implemented") unless respond_to?(method, true)
+
+      return -1 if send(method, fqdn).empty?
+      return 0 if send(method, fqdn, address).any?
+      1
+    end
+
+    def record_conflicts_name(fqdn, type, content)
+      if type == Resolv::DNS::Resource::IN::PTR
+        record_conflicts_ip(content, type, fqdn)
+      else
+        record_conflicts_ip(fqdn, type, content)
+      end
+    end
+
     private
+
+    def ib_find_a_record(fqdn, address = nil)
+      params = {
+        :_max_results => 1,
+        :view => dns_view,
+        :name => fqdn
+      }
+      params[:ipv4addr] = address if address
+      Infoblox::Arecord.find(connection, params)
+    end
+
+    def ib_find_aaaa_record(fqdn, address = nil)
+      params = {
+        :_max_results => 1,
+        :view => dns_view,
+        :name => fqdn
+      }
+      params[:ipv6addr] = address if address
+      Infoblox::AAAArecord.find(connection, params)
+    end
+
+    def ib_find_ptr_record(fqdn, ptr = nil)
+      params = {
+        :_max_results => 1,
+        :view => dns_view,
+        :ptrdname => fqdn
+      }
+      if ptr
+        ip = IPAddr.new(ptr_to_ip(ptr))
+        params["ipv#{ip.ipv4? ? 4 : 6}addr".to_sym] = ip.to_s
+        params[:name] = ptr
+      end
+      Infoblox::Ptr.find(connection, params)
+    end
+
+    def ib_find_cname_record(fqdn, address = nil)
+      params = {
+        :_max_results => 1,
+        :view => dns_view,
+        :name => fqdn
+      }
+      params[:canonical] = address if address
+      Infoblox::Cname.find(connection, params)
+    end
 
     def ib_create_a_record(fqdn, address)
       ib_create(Infoblox::Arecord, :name => fqdn, :ipv4addr => address)
