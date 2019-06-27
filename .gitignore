@@ -8,3 +8,4 @@ Gemfile.lock
 .ruby-*
 tags
 config/*.yml
+extra/*.local.sh

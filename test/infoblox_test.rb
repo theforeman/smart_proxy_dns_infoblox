@@ -13,6 +13,74 @@ class InfobloxTest < Test::Unit::TestCase
     @provider = Proxy::Dns::Infoblox::Record.new('a_host', nil, 999, 'default.test')
   end
 
+  def test_conflict_a_ok
+    @provider.expects(:ib_find_a_record).with("test.example.com").returns([])
+    assert_equal(-1, @provider.record_conflicts_ip("test.example.com", Resolv::DNS::Resource::IN::A, "1.2.3.4"))
+  end
+
+  def test_conflict_a_already_exists
+    @provider.expects(:ib_find_a_record).with("test.example.com").returns([true])
+    @provider.expects(:ib_find_a_record).with("test.example.com", "1.2.3.4").returns([true])
+    assert_equal(0, @provider.record_conflicts_ip("test.example.com", Resolv::DNS::Resource::IN::A, "1.2.3.4"))
+  end
+
+  def test_conflict_a_conflict
+    @provider.expects(:ib_find_a_record).with("test.example.com").returns([false])
+    @provider.expects(:ib_find_a_record).with("test.example.com", "1.2.3.4").returns([false])
+    assert_equal(1, @provider.record_conflicts_ip("test.example.com", Resolv::DNS::Resource::IN::A, "1.2.3.4"))
+  end
+
+  def test_conflict_aaaa_ok
+    @provider.expects(:ib_find_aaaa_record).with("test.example.com").returns([])
+    assert_equal(-1, @provider.record_conflicts_ip("test.example.com", Resolv::DNS::Resource::IN::AAAA, "1.2.3.4"))
+  end
+
+  def test_conflict_aaaa_already_exists
+    @provider.expects(:ib_find_aaaa_record).with("test.example.com").returns([true])
+    @provider.expects(:ib_find_aaaa_record).with("test.example.com", "1.2.3.4").returns([true])
+    assert_equal(0, @provider.record_conflicts_ip("test.example.com", Resolv::DNS::Resource::IN::AAAA, "1.2.3.4"))
+  end
+
+  def test_conflict_aaaa_conflict
+    @provider.expects(:ib_find_aaaa_record).with("test.example.com").returns([false])
+    @provider.expects(:ib_find_aaaa_record).with("test.example.com", "1.2.3.4").returns([false])
+    assert_equal(1, @provider.record_conflicts_ip("test.example.com", Resolv::DNS::Resource::IN::AAAA, "1.2.3.4"))
+  end
+
+  def test_conflict_ptr_ok
+    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa").returns([])
+    assert_equal(-1, @provider.record_conflicts_ip("13.202.168.192.in-addr.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
+  end
+
+  def test_conflict_ptr_already_exists
+    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa").returns([true])
+    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa", "test.example.com").returns([true])
+    assert_equal(0, @provider.record_conflicts_ip("13.202.168.192.in-addr.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
+  end
+
+  def test_conflict_ptr_conflict
+    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa").returns([false])
+    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa", "test.example.com").returns([false])
+    assert_equal(1, @provider.record_conflicts_ip("13.202.168.192.in-addr.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
+  end
+
+  def test_conflict_cname_ok
+    @provider.expects(:ib_find_cname_record).with("test.example.com").returns([])
+    assert_equal(-1, @provider.record_conflicts_ip("test.example.com", Resolv::DNS::Resource::IN::CNAME, "alias.example.com"))
+  end
+
+  def test_conflict_cname_already_exists
+    @provider.expects(:ib_find_cname_record).with("test.example.com").returns([true])
+    @provider.expects(:ib_find_cname_record).with("test.example.com", "alias.example.com").returns([true])
+    assert_equal(0, @provider.record_conflicts_ip("test.example.com", Resolv::DNS::Resource::IN::CNAME, "alias.example.com"))
+  end
+
+  def test_conflict_cname_conflict
+    @provider.expects(:ib_find_cname_record).with("test.example.com").returns([false])
+    @provider.expects(:ib_find_cname_record).with("test.example.com", "alias.example.com").returns([false])
+    assert_equal(1, @provider.record_conflicts_ip("test.example.com", Resolv::DNS::Resource::IN::CNAME, "alias.example.com"))
+  end
+
   def test_create_a
     fqdn = 'test.example.com'
     ip = '10.1.1.1'
