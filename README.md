@@ -1,7 +1,5 @@
 # SmartProxyDnsInfoblox
 
-[![Build Status](https://travis-ci.org/theforeman/smart_proxy_dns_infoblox.svg?branch=master)](https://travis-ci.org/theforeman/smart_proxy_dns_infoblox)
-
 This plugin adds a new DNS provider for managing records in MyService.
 
 ## Installation
