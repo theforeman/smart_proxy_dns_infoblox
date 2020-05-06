@@ -41,9 +41,17 @@ class IntegrationTest < ::Test::Unit::TestCase
     assert last_response.ok?, "Last response was not ok: #{last_response.status} #{last_response.body}"
   end
 
-  def test_create_ptr_record
-    @server.expects(:create_ptr_record).with("test.com", "33.33.168.192.in-addr.arpa")
+  def test_create_ptr4_record
+    @server.expects(:ib_find_ptr4_record).with('test.com').returns([])
+    @server.expects(:ib_create_ptr_record).with('33.33.168.192.in-addr.arpa', 'test.com')
     post '/', :fqdn => 'test.com', :value => '33.33.168.192.in-addr.arpa', :type => 'PTR'
+    assert last_response.ok?, "Last response was not ok: #{last_response.status} #{last_response.body}"
+  end
+
+  def test_create_ptr6_record
+    @server.expects(:ib_find_ptr6_record).with('test.com').returns([])
+    @server.expects(:ib_create_ptr_record).with('1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa', 'test.com')
+    post '/', :fqdn => 'test.com', :value => '1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa', :type => 'PTR'
     assert last_response.ok?, "Last response was not ok: #{last_response.status} #{last_response.body}"
   end
 

@@ -48,20 +48,31 @@ class InfobloxTest < Test::Unit::TestCase
   end
 
   def test_conflict_ptr_ok
-    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa").returns([])
-    assert_equal(-1, @provider.record_conflicts_ip("13.202.168.192.in-addr.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
+    @provider.expects(:ib_find_ptr4_record).with("test.example.com").returns([])
+    assert_equal(-1, @provider.record_conflicts_name("13.202.168.192.in-addr.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
+
+    @provider.expects(:ib_find_ptr6_record).with("test.example.com").returns([])
+    assert_equal(-1, @provider.record_conflicts_name("1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
   end
 
   def test_conflict_ptr_already_exists
-    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa").returns([true])
-    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa", "test.example.com").returns([true])
-    assert_equal(0, @provider.record_conflicts_ip("13.202.168.192.in-addr.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
+    @provider.expects(:ib_find_ptr4_record).with("test.example.com").returns([true])
+    @provider.expects(:ib_find_ptr4_record).with("test.example.com", "13.202.168.192.in-addr.arpa").returns([true])
+    assert_equal(0, @provider.record_conflicts_name("13.202.168.192.in-addr.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
+
+    @provider.expects(:ib_find_ptr6_record).with("test.example.com").returns([true])
+    @provider.expects(:ib_find_ptr6_record).with("test.example.com", "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa").returns([true])
+    assert_equal(0, @provider.record_conflicts_name("1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
   end
 
   def test_conflict_ptr_conflict
-    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa").returns([false])
-    @provider.expects(:ib_find_ptr_record).with("13.202.168.192.in-addr.arpa", "test.example.com").returns([false])
-    assert_equal(1, @provider.record_conflicts_ip("13.202.168.192.in-addr.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
+    @provider.expects(:ib_find_ptr4_record).with("test.example.com").returns([false])
+    @provider.expects(:ib_find_ptr4_record).with("test.example.com", "13.202.168.192.in-addr.arpa").returns([false])
+    assert_equal(1, @provider.record_conflicts_name("13.202.168.192.in-addr.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
+
+    @provider.expects(:ib_find_ptr6_record).with("test.example.com").returns([false])
+    @provider.expects(:ib_find_ptr6_record).with("test.example.com", "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa").returns([false])
+    assert_equal(1, @provider.record_conflicts_name("1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa", Resolv::DNS::Resource::IN::PTR, "test.example.com"))
   end
 
   def test_conflict_cname_ok
