@@ -24,7 +24,12 @@ module Proxy::Dns::Infoblox
     #  0 = already exists and do nothing
     #  1 = conflict and error out
     def record_conflicts_ip(fqdn, type, address)
-      method = "ib_find_#{type.name.split('::').last.downcase}_record".to_sym
+      if type == Resolv::DNS::Resource::IN::PTR
+        ip = IPAddr.new(ptr_to_ip(address))
+        method = "ib_find_#{type.name.split('::').last.downcase}#{ip.ipv4? ? 4 : 6}_record".to_sym
+      else
+        method = "ib_find_#{type.name.split('::').last.downcase}_record".to_sym
+      end
       raise(Proxy::Dns::Error, "Finding of #{type} records not implemented") unless respond_to?(method, true)
 
       return -1 if send(method, fqdn).empty?
@@ -62,15 +67,31 @@ module Proxy::Dns::Infoblox
       Infoblox::AAAArecord.find(connection, params)
     end
 
-    def ib_find_ptr_record(fqdn, ptr = nil)
+    def ib_find_ptr4_record(fqdn, ptr = nil)
       params = {
         :_max_results => 1,
         :view => dns_view,
-        :ptrdname => fqdn
+        :ptrdname => fqdn,
+        :'name~' => 'in-addr\.arpa$'
       }
       if ptr
         ip = IPAddr.new(ptr_to_ip(ptr))
-        params["ipv#{ip.ipv4? ? 4 : 6}addr".to_sym] = ip.to_s
+        params[:ipv4addr] = ip.to_s
+        params[:name] = ptr
+      end
+      Infoblox::Ptr.find(connection, params)
+    end
+
+    def ib_find_ptr6_record(fqdn, ptr = nil)
+      params = {
+        :_max_results => 1,
+        :view => dns_view,
+        :ptrdname => fqdn,
+        :'name~' => 'ip6\.arpa$'
+      }
+      if ptr
+        ip = IPAddr.new(ptr_to_ip(ptr))
+        params[:ipv6addr] = ip.to_s
         params[:name] = ptr
       end
       Infoblox::Ptr.find(connection, params)
