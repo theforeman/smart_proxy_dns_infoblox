@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'infoblox', '>= 0.4.1'
 group :development do
   gem 'rake'
   gem 'test-unit'
