@@ -17,8 +17,4 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.5'
 
   s.add_runtime_dependency('infoblox', '~> 3.0')
-
-  s.add_development_dependency('rubocop', '~> 1.28.0')
-  s.add_development_dependency('rubocop-performance')
-  s.add_development_dependency('rubocop-rake')
 end
