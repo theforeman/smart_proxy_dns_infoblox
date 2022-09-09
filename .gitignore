@@ -9,3 +9,5 @@ Gemfile.lock
 tags
 config/*.yml
 extra/*.local.sh
+jenkins/reports/
+test/reports/
