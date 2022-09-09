@@ -11,12 +11,14 @@ module Proxy::Dns::Infoblox
     def do_create(name, value, type)
       method = "ib_create_#{type.downcase}_record".to_sym
       raise(Proxy::Dns::Error, "Creation of #{type} records not implemented") unless respond_to?(method, true)
+
       send(method, name, value)
     end
 
     def do_remove(name, type)
       method = "ib_remove_#{type.downcase}_record".to_sym
       raise(Proxy::Dns::Error, "Deletion of #{type} records not implemented") unless respond_to?(method, true)
+
       send(method, name)
     end
 
@@ -34,6 +36,7 @@ module Proxy::Dns::Infoblox
 
       return -1 if send(method, fqdn).empty?
       return 0 if send(method, fqdn, address).any?
+
       1
     end
 
@@ -160,6 +163,7 @@ module Proxy::Dns::Infoblox
       record = clazz.find(connection, params.merge(_max_results: 1, view: dns_view)).first
 
       raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}" if record.nil?
+
       ret_value = record.delete || (raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}")
 
       ib_clear_dns_cache(record)
