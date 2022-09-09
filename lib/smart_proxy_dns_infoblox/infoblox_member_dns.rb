@@ -13,7 +13,7 @@ module Proxy::Dns::Infoblox
       post_body[:domain] = domain unless domain.nil?
       post_body[:view] = view unless view.nil?
 
-      JSON.parse(connection.post(resource_uri + "?_function=clear_dns_cache", post_body).body)
+      JSON.parse(connection.post("#{resource_uri}?_function=clear_dns_cache", post_body).body)
     end
   end
 end
