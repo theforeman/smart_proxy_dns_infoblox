@@ -6,10 +6,6 @@ AllCops:
     - 'extra/**/*.rb'
     - 'vendor/**/*'
 
-# There's if statement in the Gemfile
-Bundler/DuplicatedGem:
-  Enabled: false
-
 Metrics:
   Enabled: false
 
