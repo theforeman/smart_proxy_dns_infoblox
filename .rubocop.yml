@@ -1,16 +1,28 @@
 inherit_from: .rubocop_todo.yml
 
+require:
+  - rubocop-performance
+  - rubocop-rake
+
 AllCops:
-  TargetRubyVersion: 2.0
+  NewCops: enable
+  TargetRubyVersion: 2.5
   Exclude:
     - 'extra/**/*.rb'
     - 'vendor/**/*'
+
+Gemspec/RequireMFA:
+  Enabled: false
 
 Metrics:
   Enabled: false
 
 Layout/LeadingCommentSpace:
   Enabled: false
+
+Layout/LineLength:
+  Exclude:
+    - 'test/**/*.rb'
 
 Layout/MultilineMethodCallBraceLayout:
   Enabled: false
@@ -84,7 +96,10 @@ Style/FormatString:
 Style/NumericLiterals:
   Enabled: false
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false
 
 Performance/Casecmp:
@@ -133,10 +148,10 @@ Style/EmptyMethod:
 Style/ParenthesesAroundCondition:
   Enabled: false
 
-Layout/AlignHash:
+Layout/HashAlignment:
   Enabled: false
 
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   Enabled: false
 
 # disabled until we can configure "+" as concat sign

@@ -21,8 +21,11 @@ class IntegrationTest < ::Test::Unit::TestCase
   include Rack::Test::Methods
 
   class DnsProviderForTesting < Proxy::Dns::Infoblox::Record
+    # This explicitly doesn't want to do anything
+    # rubocop:disable Lint/MissingSuper Style/RedundantInitialize
     def initialize
     end
+    # rubocop:enable Lint/MissingSuper Style/RedundantInitialize
   end
 
   def app
