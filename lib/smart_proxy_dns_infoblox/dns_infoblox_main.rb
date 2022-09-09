@@ -178,9 +178,9 @@ module Proxy::Dns::Infoblox
       MemberDns.all(connection).each do |member|
         member.clear_dns_cache(view: record.view, domain: record.name)
       end
-    rescue StandardError => ex
+    rescue StandardError => e
       # Failing to clear the DNS cache should never be an error
-      logger.warn("Exception #{ex} was raised when clearing DNS cache")
+      logger.warn("Exception #{e} was raised when clearing DNS cache")
     end
   end
 end
