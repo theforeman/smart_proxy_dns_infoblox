@@ -160,15 +160,15 @@ module Proxy::Dns::Infoblox
     end
 
     def ib_delete(clazz, params)
-      record = clazz.find(connection, params.merge(_max_results: 1, view: dns_view)).first
+      records = clazz.find(connection, params.merge(view: dns_view))
+      raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}" if records.empty?
 
-      raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}" if record.nil?
+      records.each do |record|
+        record.delete
+        ib_clear_dns_cache(record)
+      end
 
-      ret_value = record.delete || (raise Proxy::Dns::NotFound, "Cannot find #{clazz.class.name} entry for #{params}")
-
-      ib_clear_dns_cache(record)
-
-      ret_value
+      true
     end
 
     def ib_clear_dns_cache(record)
