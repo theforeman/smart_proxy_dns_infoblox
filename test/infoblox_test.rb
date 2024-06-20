@@ -171,6 +171,35 @@ class InfobloxTest < Test::Unit::TestCase
     @provider.do_remove(ptr, 'PTR')
   end
 
+  def test_wapi_remove_multi_a_records
+    address1 = '192.168.1.11'
+    address2 = '192.168.2.22'
+    fqdn = 'test.example.com'
+
+    record1 = Infoblox::Arecord.new name: fqdn, :ipv4addr => address1
+    record1.expects(:delete).returns(record1)
+    record2 = Infoblox::Arecord.new name: fqdn, :ipv4addr => address2
+    record2.expects(:delete).returns(record2)
+
+    Infoblox::Arecord.expects(:find).returns([record1, record2])
+    @provider.do_remove(fqdn, 'A')
+  end
+
+  def test_wapi_remove_multi_ptr_records
+    ptr = '1.1.1.10.in-addr.arpa'
+    ip = '10.1.1.1'
+    fqdn1 = 'test1.example.com'
+    fqdn2 = 'test2.example.com'
+
+    record1 = Infoblox::Ptr.new name: ptr, :ptrdname => fqdn1, :ipv4addr => ip
+    record1.expects(:delete).returns(record1)
+    record2 = Infoblox::Ptr.new name: ptr, :ptrdname => fqdn2, :ipv4addr => ip
+    record2.expects(:delete).returns(record2)
+
+    Infoblox::Ptr.expects(:find).returns([record1, record2])
+    @provider.do_remove(ptr, 'PTR')
+  end
+
   def test_wapi_old
     fqdn = 'test.example.com'
     record = Infoblox::Arecord.new name: fqdn
