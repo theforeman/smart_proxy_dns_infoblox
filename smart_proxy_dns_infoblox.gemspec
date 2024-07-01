@@ -9,12 +9,12 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/theforeman/smart_proxy_dns_infoblox'
 
   s.summary     = "Infoblox DNS provider plugin for Foreman's smart proxy"
-  s.description = "Infoblox DNS provider plugin for Foreman's smart proxy"
+  s.description = "Infoblox DNS provider plugin for Foreman's smart proxy."
 
   s.files       = Dir['{config,lib,bundler.d}/**/*'] + ['README.md', 'LICENSE']
   s.test_files  = Dir['test/**/*']
 
-  s.required_ruby_version = '>= 2.5'
+  s.required_ruby_version = '>= 2.7'
 
   s.add_runtime_dependency('infoblox', '~> 3.0')
 end
