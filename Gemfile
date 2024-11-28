@@ -13,6 +13,6 @@ group :test do
   gem 'mocha'
   gem 'rack-test'
   gem 'rake'
-  gem 'smart_proxy', :github => 'theforeman/smart-proxy', :branch => 'develop'
+  gem 'smart_proxy', :github => 'theforeman/smart-proxy', :branch => ENV.fetch('SMART_PROXY_BRANCH', 'develop')
   gem 'test-unit'
 end

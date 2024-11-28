@@ -19,7 +19,5 @@ jobs:
   test:
     name: Tests
     needs: rubocop
-    uses: theforeman/actions/.github/workflows/test-gem.yml@v0
-    with:
-      command: bundle exec rake test
+    uses: theforeman/actions/.github/workflows/smart_proxy_plugin.yml@v0
 ...
